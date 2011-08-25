@@ -18,11 +18,16 @@ def main (argv=None):
         print("Dataset file required", file=sys.stderr);
         return 1;
 
-    f = open(argv[1], "rt");
-    problem = parser.run(f, dataset.ProblemStructure)
-    f.close()
+    try:
+        f = open(argv[1], "rt");
+        problem = parser.run(f, dataset.ProblemStructure)
 
-    logic.run(problem)
+        logic.run(problem)
+    except KeyboardInterrupt:
+        print("Interrupted. BYE!", file=sys.stderr)
+        return 1
+    finally:
+        f.close()
 
     return 0
 
