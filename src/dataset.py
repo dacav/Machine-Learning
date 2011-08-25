@@ -58,18 +58,19 @@ class Classes:
     def cmp (self, name0, name1):
         return id(name0) == id(name1)
 
-    def count_by (self, ex_classes, normalize=False):
+    def distrib (self, ex_classes, normalize=True):
         '''
         Given an iterator on the classes of a certain example set, returns
         a dictionary [ class -> count ]. By enabling the normalize flag
         you can shape the result as probability distribution.
         '''
         buckets = dict( (k, 0) for k in self.u )
+        cnt = 0
         for x in ex_classes:
             buckets[x] += 1
-        if normalize:
-            nex = len(examples)
-            buckets.update( (c, n/nex) for (c,n) in buckets.iteritems() )
+            cnt += 1
+        if normalize and cnt:
+            buckets.update( (c, n/cnt) for (c,n) in buckets.iteritems() )
         return buckets
 
 class ProblemStructure :

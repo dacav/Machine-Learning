@@ -50,14 +50,16 @@ def threshold (xs_byfeat, classes, get_val, get_class):
         - The value of the information gain itself.
     '''
     classes_of = lambda xs : it.imap( get_class, xs )
-    H = lambda xs : entropy(classes.count_by(classes_of(xs)).itervalues())
+    H = lambda xs : entropy(classes.distrib(classes_of(xs)).itervalues())
     xs_entropy = H(xs_byfeat)
 
     def IG (thr):
         predicate = lambda x : x[0] < thr
-        h0 = H( it.ifilter(predicate, xs_byfeat) )
-        h1 = H( it.ifilterfalse(predicate, xs_byfeat) )
-        return (thr, xs_entropy - h0 - h1)
+        split = list( it.ifilter(predicate, xs_byfeat) )
+        h0 = H(split) * len(split)
+        split = list( it.ifilterfalse(predicate, xs_byfeat) )
+        h1 = H(split) * len(split)
+        return (thr, xs_entropy - (h0 + h1) / len(xs_byfeat))
 
     cts = candidate_thresholds(xs_byfeat, classes, get_val, get_class)
     return max( it.imap(IG, cts), key=itemgetter(1) )
@@ -77,4 +79,5 @@ def run (problem):
         reverse=True
     )
     return genes
+
 

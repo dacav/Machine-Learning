@@ -22,7 +22,8 @@ def main (argv=None):
         f = open(argv[1], "rt");
         problem = parser.run(f, dataset.ProblemStructure)
 
-        logic.run(problem)
+        genes = logic.run(problem)
+        print(*it.islice(genes, 0, 10), sep='\n')
     except KeyboardInterrupt:
         print("Interrupted. BYE!", file=sys.stderr)
         return 1
