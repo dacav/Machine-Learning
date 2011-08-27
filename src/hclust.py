@@ -5,7 +5,8 @@ import sys
 import itertools as it
 import operator
 
-from utils import Vector, avg
+from utils import avg
+from vecspace import Vector
 
 try: range = xrange
 except: pass
