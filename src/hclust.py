@@ -32,7 +32,7 @@ class ClustComparers :
 
     @staticmethod
     def dist_average (c0, c1):
-        avg(( avg(c0), avg(c1) ))
+        return Vector.distance(avg(c0), avg(c1))
 
 class ClusterManager :
 
@@ -53,7 +53,6 @@ class ClusterManager :
         # Merge the closest pair of clusters, return True if there's only
         # one cluster left.
         self.merge(*self.neirest_pair())
-        print("clusters left: ", len(self.clusters))
         return len(self.clusters) == 1
 
     def __iter__ (self):
@@ -75,11 +74,9 @@ class ClusterManager :
 
     def merge (self, c0, c1):
         if id(c0) != id(c1):
-            print("Grouping clusters:\n", c0, "\n", c1, file=sys.stderr)
             del self.clusters[id(c0)]
             del self.clusters[id(c1)]
             newclust = set.union(c0, c1)
-            print("Obtained: ", newclust, file=sys.stderr)
             self.clusters[id(newclust)] = newclust
         else:
             print("Trying to join cluster with itself", file=sys.stderr)
@@ -122,7 +119,7 @@ def main (argv=None):
 
     pylab.ion()
 
-    cm = ClusterManager(ClustComparers.dist_average, couples)
+    cm = ClusterManager(ClustComparers.nearest_neighbor, couples)
     plot_clusters(cm)
     while not cm.step():
         plot_clusters(cm)
