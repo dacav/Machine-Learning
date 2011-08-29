@@ -3,10 +3,14 @@
 from __future__ import print_function, division
 import sys
 import itertools as it
+from operator import itemgetter
+import const
 
 import parser
 import dataset
-import logic
+import thresholds
+import hclust
+import vecspace
 
 try: range = xrange
 except: pass
@@ -21,9 +25,28 @@ def main (argv=None):
     try:
         f = open(argv[1], "rt");
         problem = parser.run(f, dataset.ProblemStructure)
+        thrs = sorted( thresholds.run(problem),
+                       key=lambda (i,(th,ig)) : ig )
+        problem.set_thresholds(
+            it.imap(lambda (i,(th,ig)) : (i, th), thrs)
+        )
 
-        genes = logic.run(problem)
-        print(*it.islice(genes, 0, 10), sep='\n')
+        # indexes of the genes getting highest information gain from the
+        # splitting by thresholds.
+        best_ig = it.islice(it.imap(itemgetter(0), thrs),
+                            const.HIGHEST_TO_KEEP)
+
+        # Vectors having as many dimensions as the number of available
+        # examples. A vector for each gene.
+        examples = problem.get_examples()
+        bits = lambda i : it.imap(lambda x : int(x[0]),
+                                  examples.list_by(i))
+        vecs = it.imap(lambda i : vecspace.Vector(bits(i)), best_ig)
+        hcl = hclust.ClusterManager(vecs)
+        print("Clusters:", *hcl)
+        hcl.step()
+        print("Clusters:", *hcl)
+
     except KeyboardInterrupt:
         print("Interrupted. BYE!", file=sys.stderr)
         return 1

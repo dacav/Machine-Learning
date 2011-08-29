@@ -65,6 +65,19 @@ def threshold (xs_byfeat, classes, get_val, get_class):
     return max( it.imap(IG, cts), key=itemgetter(1) )
 
 def run (problem):
+    '''
+    Input:
+        the problem (instance of dataset.ProblemStructure)
+    Output:
+        An iterator over pairs:
+        - The first value is the identifier of the feature we are
+          referring to;
+        - The second value is a pair containing the threshold value used
+          to discriminate the class and the information gain we obtained
+          when analyzing the dataset.
+    The output is well suited to be placed as constructor parameter for a
+    dictionary.
+    '''
     examples = problem.get_examples()
     classes = problem.get_classes()
     compute_threshold = lambda gen_id : threshold(
@@ -73,11 +86,5 @@ def run (problem):
         examples.get_val,
         examples.get_class
     )
-    genes = sorted(
-        ((i, compute_threshold(i)) for i in range(problem.nfeats())),
-        key=lambda (gen_id, (thrs, igain)) : igain,
-        reverse=True
-    )
-    return genes
-
+    return ((i, compute_threshold(i)) for i in range(problem.nfeats()))
 

@@ -37,7 +37,7 @@ class ClustComparers :
 
 class ClusterManager :
 
-    def __init__ (self, clust_cmp, items):
+    def __init__ (self, items, clust_cmp = ClustComparers.dist_average):
         # The cmp_clusters function will return a tuple containing the
         # couple of compared clusters as first item and the comparison
         # score on the second
@@ -47,7 +47,7 @@ class ClusterManager :
         # the set corresponding to the cluster. Note: all clusters are
         # contained here, thus this trick works pretty well.
         clusters = dict( it.imap(lambda x : (id(x), x),
-                         it.imap(lambda *xs : set(xs), items)) )
+                                 it.imap(lambda *xs : set(xs), items)) )
         self.clusters = clusters
 
     def step (self):
@@ -120,7 +120,7 @@ def main (argv=None):
 
     pylab.ion()
 
-    cm = ClusterManager(ClustComparers.nearest_neighbor, couples)
+    cm = ClusterManager(couples)
     plot_clusters(cm)
     while not cm.step():
         plot_clusters(cm)

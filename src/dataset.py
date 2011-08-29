@@ -47,6 +47,14 @@ class Examples:
         else:
             return self.build_sorting()
 
+    def list_by (self, sel, use_thresholds=True):
+        exs = self.problem.examples
+        thrs = self.problem.thresholds
+        ret = ((p.features[sel], p.cls) for p in exs)
+        if use_thresholds and thrs and (sel in thrs):
+            ret = it.imap(lambda (v, cls) : (v < thrs[sel], cls), ret)
+        return ret
+
 class Classes:
 
     def __init__ (self):
@@ -79,9 +87,13 @@ class ProblemStructure :
         self.classes = Classes()
         self.examples = list()
         self.feat_names = feat_names
+        self.thresholds = None
 
     def nfeats (self):
         return len(self.feat_names)
+
+    def nexamples (self):
+        return len(self.examples)
 
     def check_nfeats (self, feats):
         fc = len(self.feat_names)
@@ -101,3 +113,7 @@ class ProblemStructure :
 
     def get_classes (self):
         return self.classes
+
+    def set_thresholds (self, thrs):
+        self.thresholds = dict(thrs)
+
