@@ -82,6 +82,16 @@ class ClusterManager :
         else:
             print("Trying to join cluster with itself", file=sys.stderr)
 
+    def flatten (self):
+        def to_flat (D):
+            for clid, cl in D.iteritems():
+                if len(cl) == 1:
+                    yield clid, cl
+                else:
+                    for s in it.imap(set, cl):
+                        yield id(i), s
+        self.clusters = dict(to_flat(self.clusters))
+
     def __str__ (self):
         def aux ():
             yield 'Clusters:'
@@ -94,7 +104,14 @@ class ClusterManager :
 
 def main (argv=None):
     import re
-    import pylab
+
+    # This is some example code which I used to test the hierarchical
+    # clustering. Needs pylab to be installed in order to work!
+    try:
+        import pylab
+    except:
+        print("Pylab needs to be installed for this!", file=sys.stderr)
+        return 1
 
     def get_couples (f):
         pat = re.compile(r'^ *x= *(-?\d+\.?\d*) *y= *(-?\d+\.?\d*) *$')

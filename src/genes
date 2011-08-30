@@ -5,6 +5,7 @@ import sys
 import itertools as it
 from operator import itemgetter
 import const
+import cPickle
 
 import parser
 import dataset
@@ -15,43 +16,54 @@ import vecspace
 try: range = xrange
 except: pass
 
+def build_vectors (problem):
+    thrs = sorted( thresholds.run(problem),
+                   key=lambda (i,(th,ig)) : ig )
+    problem.set_thresholds(
+        it.imap(lambda (i,(th,ig)) : (i, th), thrs)
+    )
+
+    # indexes of the genes getting highest information gain from the
+    # splitting by thresholds.
+    best_ig = it.islice(it.imap(itemgetter(0), thrs),
+                        const.HIGHEST_TO_KEEP)
+
+    # Vectors having as many dimensions as the number of available
+    # examples. A vector for each gene.
+    examples = problem.get_examples()
+    bits = lambda i : it.imap(lambda x : int(x[0]),
+                              examples.list_by(i))
+
+    def make_vector (i):
+        V = vecspace.Vector(it.imap(lambda x : int(x[0]),
+                                    examples.list_by(i)))
+        V.name = problem.feat_name(i)
+        return V
+
+    return it.imap(make_vector, best_ig)
+
 def main (argv=None):
     if not argv: argv = sys.argv
 
-    if len(argv) < 2:
-        print("Dataset file required", file=sys.stderr);
+    if len(argv) < 3:
+        print("Dataset and savefile required", file=sys.stderr);
         return 1;
 
     try:
-        f = open(argv[1], "rt");
+        f = open(argv[1], "rt")
         problem = parser.run(f, dataset.ProblemStructure)
-        thrs = sorted( thresholds.run(problem),
-                       key=lambda (i,(th,ig)) : ig )
-        problem.set_thresholds(
-            it.imap(lambda (i,(th,ig)) : (i, th), thrs)
-        )
 
-        # indexes of the genes getting highest information gain from the
-        # splitting by thresholds.
-        best_ig = it.islice(it.imap(itemgetter(0), thrs),
-                            const.HIGHEST_TO_KEEP)
-
-        # Vectors having as many dimensions as the number of available
-        # examples. A vector for each gene.
-        examples = problem.get_examples()
-        bits = lambda i : it.imap(lambda x : int(x[0]),
-                                  examples.list_by(i))
-        vecs = it.imap(lambda i : vecspace.Vector(bits(i)), best_ig)
-        hcl = hclust.ClusterManager(vecs)
-        print("Clusters:", *hcl)
-        hcl.step()
-        print("Clusters:", *hcl)
-
+        out = open(argv[2], "wt")
+        for V in build_vectors(problem):
+            print(V.name, "\t", V, file=out)
     except KeyboardInterrupt:
         print("Interrupted. BYE!", file=sys.stderr)
         return 1
+    except Exception as e:
+        print("Error:", e)
     finally:
         f.close()
+        out.close()
 
     return 0
 

@@ -86,21 +86,25 @@ class ProblemStructure :
     def __init__ (self, feat_names):
         self.classes = Classes()
         self.examples = list()
-        self.feat_names = feat_names
+        self.names = feat_names
         self.thresholds = None
 
+    def feat_name(self, feat_id):
+        return self.names[feat_id]
+
     def nfeats (self):
-        return len(self.feat_names)
+        return len(self.names)
 
     def nexamples (self):
         return len(self.examples)
 
     def check_nfeats (self, feats):
-        fc = len(self.feat_names)
+        fc = len(self.names)
         nfc = len(feats)
         if fc != nfc:
             raise ProblemError("Incongruent number of features:",
-                               "should be", fc, "but we have", nfc)
+                               "should be" + str(fc) + "but we have" +
+                               str(nfc))
 
     def add_example (self, features, class_name):
         features = list( it.imap(float, features) )
