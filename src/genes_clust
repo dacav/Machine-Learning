@@ -62,7 +62,7 @@ def main (argv=None):
         print("Available algorithms:", *algs.iterkeys(), sep="\n\t",
               file=sys.stderr)
 
-    if len(argv) < 2:
+    if len(argv) < 3:
         print("Usage: {0} <vectors> <algorithm>", file=sys.stderr)
         print_algs()
         return 1;
