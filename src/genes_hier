@@ -4,8 +4,6 @@ from __future__ import print_function, division
 import sys
 import itertools as it
 from operator import itemgetter
-import const
-import cPickle
 
 import parser
 import dataset
@@ -16,7 +14,7 @@ import vecspace
 try: range = xrange
 except: pass
 
-def build_vectors (problem):
+def build_vectors (problem, highest_to_keep):
     thrs = sorted( thresholds.run(problem),
                    key=lambda (i,(th,ig)) : ig )
     problem.set_thresholds(
@@ -25,8 +23,7 @@ def build_vectors (problem):
 
     # indexes of the genes getting highest information gain from the
     # splitting by thresholds.
-    best_ig = it.islice(it.imap(itemgetter(0), thrs),
-                        const.HIGHEST_TO_KEEP)
+    best_ig = it.islice(it.imap(itemgetter(0), thrs), highest_to_keep)
 
     # Vectors having as many dimensions as the number of available
     # examples. A vector for each gene.
@@ -46,7 +43,8 @@ def main (argv=None):
     if not argv: argv = sys.argv
 
     if len(argv) < 3:
-        print("Dataset and savefile required", file=sys.stderr);
+        print("Usage: {0} <dataset> <output file> <N>".format(argv[0]),
+              file=sys.stderr)
         return 1;
 
     try:
@@ -54,7 +52,7 @@ def main (argv=None):
         problem = parser.run(f, dataset.ProblemStructure)
 
         out = open(argv[2], "wt")
-        for V in build_vectors(problem):
+        for V in build_vectors(problem, int(argv[3])):
             print(V.name, "\t", V, file=out)
     except KeyboardInterrupt:
         print("Interrupted. BYE!", file=sys.stderr)

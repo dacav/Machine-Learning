@@ -37,7 +37,8 @@ class ClustComparers :
 
 class ClusterManager :
 
-    def __init__ (self, items, clust_cmp = ClustComparers.dist_average):
+    def __init__ (self, items, clust_cmp = ClustComparers.dist_average,
+                  history=None):
         # The cmp_clusters function will return a tuple containing the
         # couple of compared clusters as first item and the comparison
         # score on the second
@@ -50,11 +51,21 @@ class ClusterManager :
                                  it.imap(lambda *xs : set(xs), items)) )
         self.clusters = clusters
 
+        # History callback: used as: history(c0, c1, merged(c0, c1))
+        self.history = history
+        if history:
+            # if we keep some history, then we need to avoid
+            # garbage-collecting of the clusters.
+            self.all_clusters = list(self)
+
     def step (self):
         # Merge the closest pair of clusters, return True if there's only
         # one cluster left.
         self.merge(*self.neirest_pair())
         return len(self.clusters) == 1
+
+    def all_steps (self):
+        while not self.step(): pass
 
     def __iter__ (self):
         return self.clusters.itervalues()
@@ -78,6 +89,9 @@ class ClusterManager :
             del self.clusters[id(c0)]
             del self.clusters[id(c1)]
             newclust = set.union(c0, c1)
+            if self.history:
+                self.history(c0, c1, newclust)
+                self.all_clusters.append(newclust)
             self.clusters[id(newclust)] = newclust
         else:
             print("Trying to join cluster with itself", file=sys.stderr)
@@ -89,7 +103,7 @@ class ClusterManager :
                     yield clid, cl
                 else:
                     for s in it.imap(set, cl):
-                        yield id(i), s
+                        yield id(s), s
         self.clusters = dict(to_flat(self.clusters))
 
     def __str__ (self):

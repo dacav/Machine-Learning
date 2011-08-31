@@ -14,7 +14,7 @@ import math
 import sys
 from operator import itemgetter
 
-import utils, const
+import utils
 
 try: range = xrange
 except: pass

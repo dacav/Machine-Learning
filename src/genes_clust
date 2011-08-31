@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+
+from __future__ import print_function, division
+import sys
+import itertools as it
+import re
+from collections import defaultdict as defdict
+
+from vecspace import Vector
+import hclust
+
+try: range = xrange
+except: pass
+
+class ClustHistory :
+
+    def __init__ (self, out):
+        self.out = out
+        self.seen = defdict(it.count().next)
+        self.linked = set()
+        print("digraph Clust {", file=self.out)
+
+    def describe_nodes (self, *cs):
+        for c in cs:
+            if id(c) in self.seen.iterkeys():
+                continue
+            cid = self.node_id(c)
+            if len(c) == 1:
+                name = next(iter(c)).name
+                shape = 'box'
+            else:
+                name = ''
+                shape = 'point'
+            fmt = "\t{0} [label=\"{1}\", shape={2}]"
+            print(fmt.format(cid, name, shape), file=self.out)
+
+    def node_id (self, c):
+        return self.seen[id(c)]
+
+    def __call__ (self, c0, c1, to):
+        self.describe_nodes(c0, c1, to)
+        print("\t{0} -> {1}; {0} -> {2}".format(self.node_id(to),
+                                                self.node_id(c0),
+                                                self.node_id(c1)),
+              file=self.out
+        )
+
+    def __del__ (self):
+        print("}", file=self.out)
+
+def main (argv=None):
+    if not argv: argv = sys.argv
+
+    if len(argv) < 2:
+        print("Files with vectors required", file=sys.stderr);
+        return 1;
+
+    pattern = re.compile(r'^ *Vector(.*) *$')
+
+    def buildvec (name, desc):
+        V = Vector(eval(pattern.match(desc).group(1)))
+        V.name = name.strip()
+        return V
+
+    try:
+        inp = open(argv[1], "rt")
+        parts = it.imap(lambda row : row.split('\t'), inp)
+        genes = it.starmap(buildvec, parts)
+        ch = ClustHistory(sys.stdout)
+        clm = hclust.ClusterManager(genes, history=ch)
+        clm.all_steps()
+    finally:
+        inp.close()
+
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())
+
