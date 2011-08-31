@@ -46,6 +46,10 @@ class Vector (tuple) :
         return "Vector" + super(Vector, self).__repr__()
 
     @staticmethod
-    def distance (v0, v1, power=2):
-        return sum( x**power for x in (v0 - v1) )**(1/power)
+    def distance (V0, V1, power=2):
+        return sum( x**power for x in (V0 - V1) )**(1/power)
+
+    @staticmethod
+    def norm (V, root=0.5):
+        return sum( x**2 for x in V )**root
 

@@ -58,11 +58,14 @@ class ClusterManager :
             # garbage-collecting of the clusters.
             self.all_clusters = list(self)
 
+    def fixed_point (self):
+        return len(self.clusters) == 1
+
     def step (self):
         # Merge the closest pair of clusters, return True if there's only
         # one cluster left.
         self.merge(*self.neirest_pair())
-        return len(self.clusters) == 1
+        return self.fixed_point()
 
     def all_steps (self):
         while not self.step(): pass
@@ -115,6 +118,12 @@ class ClusterManager :
                 yield '\n  '
                 yield str(c)
         return ''.join(aux())
+
+    def sum_of_squared_errors (self):
+        normsq = lambda v : abs(Vector.norm(v, 1))
+        clust_avg = lambda clst : (clst, avg(clst))
+        clust_sqe = lambda (clst, mu) : sum(normsq(v - mu) for v in clst)
+        return sum( it.imap(clust_sqe, it.imap(clust_avg, self)) )
 
 def main (argv=None):
     import re
