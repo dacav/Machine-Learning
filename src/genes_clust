@@ -51,8 +51,20 @@ class ClustHistory :
 def main (argv=None):
     if not argv: argv = sys.argv
 
+    algs = {
+        "nearest-neighbor"   : hclust.ClustComparers.nearest_neighbor,
+        "farthest-neighbor"  : hclust.ClustComparers.farthest_neighbor,
+        "average-distance"   : hclust.ClustComparers.average_distance,
+        "dist-average"       : hclust.ClustComparers.dist_average
+    }
+
+    def print_algs ():
+        print("Available algorithms:", *algs.iterkeys(), sep="\n\t",
+              file=sys.stderr)
+
     if len(argv) < 2:
-        print("Files with vectors required", file=sys.stderr);
+        print("Usage: {0} <vectors> <algorithm>", file=sys.stderr)
+        print_algs()
         return 1;
 
     pattern = re.compile(r'^ *Vector(.*) *$')
@@ -67,8 +79,16 @@ def main (argv=None):
         parts = it.imap(lambda row : row.split('\t'), inp)
         genes = it.starmap(buildvec, parts)
         ch = ClustHistory(sys.stdout)
-        clm = hclust.ClusterManager(genes, history=ch)
+        alg = algs[ argv[2].lower() ]
+        clm = hclust.ClusterManager(genes, clust_cmp=alg, history=ch)
         clm.all_steps()
+    except KeyError as e:
+        print("Cannot use algorithm", e, file=sys.stderr)
+        print_algs()
+        return 1
+    except KeyboardInterrupt:
+        print("Interrupted. BYE!", file=sys.stderr)
+        return 1
     finally:
         inp.close()
 
