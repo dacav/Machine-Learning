@@ -122,8 +122,10 @@ def main (argv=None):
             print("Starting clustering with algorithm", alg, file=log)
 
             for step in it.count(1):
-                print("    At iteration", step, "sum of squared",
-                      "errors:", clm.sum_of_squared_errors(),
+                sqderr = clm.sum_of_squared_errors()
+                print("    Iteration: {0:03d}".format(step),
+                      "Clusters: {0:03d}".format(clm.nclusts()),
+                      "Sum of quared errors: {0:03.5f}".format(sqderr),
                       file=log)
                 if clm.step(): break
             ch.end()

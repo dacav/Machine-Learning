@@ -70,6 +70,9 @@ class ClusterManager :
     def all_steps (self):
         while not self.step(): pass
 
+    def nclusts (self):
+        return len(self.clusters)
+
     def __iter__ (self):
         return self.clusters.itervalues()
 
@@ -122,8 +125,8 @@ class ClusterManager :
     def sum_of_squared_errors (self):
         normsq = lambda v : abs(Vector.norm(v, 1))
         clust_avg = lambda clst : (clst, avg(clst))
-        clust_sqe = lambda (clst, mu) : sum(normsq(v - mu) for v in clst)
-        return sum( it.imap(clust_sqe, it.imap(clust_avg, self)) )
+        clust_sqerr = lambda (clst, mu) : sum(normsq(v - mu) for v in clst)
+        return sum( it.imap(clust_sqerr, it.imap(clust_avg, self)) )
 
 def main (argv=None):
     import re
