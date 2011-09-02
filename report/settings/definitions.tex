@@ -1,0 +1,33 @@
+\newcommand{\Image}[4]{
+    \begin{figure}[hb]
+    \centering
+    \includegraphics[width={#4}]{{#1}}
+    \caption{{#2}}
+    \label{#3}
+    \end{figure}
+}
+
+\newcommand{\MsgBox}[3]{
+    %\shadowbox{ %
+    \fbox{ %
+        \centering %
+        \begin{minipage}{\textwidth}
+        \vspace{0.3em}
+        \underline{\textbf{{#1}}: {#2}}
+        \vspace{1em}
+        \\
+        {#3}
+        \vspace{0.3em}
+        \end{minipage} %
+    }
+}
+
+\newcommand{\Note}[2]{\MsgBox{Note}{#1}{#2}}
+
+\newcommand{\FileName}[1]{\textbf{\textsl{\textsf{{#1}}}}}
+\newcommand{\PackageName}[1]{\textbf{\textsl{\textsf{{#1}}}}}
+\newcommand{\Const}[1]{{{\tt {#1}}}}
+\newcommand{\TechName}[1]{\textsf{{#1}}}
+\newcommand{\ToolName}[1]{\emph{{#1}}}
+\newcommand{\StdName}[1]{\emph{{#1}}}
+\newcommand{\Command}[1]{{\tt {#1}}}
