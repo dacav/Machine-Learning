@@ -1,0 +1,78 @@
+In this section the problem will be analyzed from a theoretical
+perspective.
+
+\subsection{ Recognizing Thresholds } \label{sub:Thresholds}
+
+    Some genes can be more related than others with the kind of leukemia
+    the patient is affected by: for a gene having a good correlation, we
+    can infer the classification basing on the expression level, thus
+    classifying differently an instance if the value is above or below a
+    certain threshold.
+
+    Supposing we already have a threshold for each gene, since we are in a
+    \emph{supervised learning} setting, we could determine the
+    aforementioned degree of correlation by measuring how good is the
+    threshold-based prediction with respect to the real assignment
+    of examples.
+
+    First of all, however, we should determine for each gene the best
+    threshold for the binary classification.
+
+    \subsubsection{ Entropy of the Dataset }
+
+        If we are given with a certain dataset, which is partitioned
+        according to a set of classes $y_1 \cdots y_c$, we can use the
+        \emph{Information Entropy} as index of uniformity of the dataset.
+
+        The Entropy is a measure of the uncertainty of a random variable.
+        For a discrete random variable $X$ taking values $\Set{ x_1 \cdots
+        x_n }$ with a certain probability mass function $p$, the Entropy
+        is defined as:
+        \[
+        H(X) = \sum_{i = 0}^n p(x_i) \cdot \log_2{p(x_i)}
+        \]
+        By construction, the Entropy is maximum for a random variable
+        having uniform distribution, while it gets lower values for
+        non-homogeneous distributions.
+
+        We can consider a dataset $D$ as a set of values drawn from a
+        categorical distribution, for which we can estimate the
+        probability distribution among the classes $y_1 \cdots y_c$ as the
+        proportion between the classes cardinality $D_1 \cdots D_c$ and
+        the whole set cardinality. In other words we can define:
+        \[
+        \Prob{x \in y_i} = \frac{ \Card{D_i} }{ \Card{D} }
+        \]
+
+        In our case we need a binary classification, thus examples are
+        partitioned in two subsets, $D_{\tiny{\AML}}$ and
+        $D_{\tiny{\ALL}}$, of the dataset $D$. As we have a mass function
+        we can compute the Entropy of the dataset.
+
+    \subsubsection{ Computing the threshold }
+
+        The less is the Entropy of a set, the least is the information we
+        gain from knowing an example to belong that set. So far, when
+        splitting a set $D$ into partitions $D_1 \cdots D_N$, we obtain a
+        change in the overall Entropy: this is the concept of Information
+        Gain:
+        \[
+        IG(D, D_1 \cdots D_N) =
+            H(D) - \sum_{i = 0}^N \frac{ \Card{D_i} }{ \Card{D} } H(D_i)
+        \]
+
+        For each gene $g$, we search an expression level threshold $t_g$
+        to be used as boundary for our dataset partitioning. Once we have
+        $t_g$ we can split $D$ into two subsets:
+        \[
+        D_0 \:=\: \Set{ x \in D \:|\: x_g < t_g }
+        \qquad
+        D_1 \:=\: \Set{ x \in D \:|\: x_g \geq t_g }
+        \]
+        Once we have a partitioning, we can compute the Information Gain
+        coming from it.
+
+        The best suited threshold $t_g$ for a gene $g$ is the one which
+        maximizes the Information Gain coming from the splitting
+
+\subsection{ Clustering of Genes } \label{sub:Clustering}

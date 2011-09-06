@@ -1,19 +1,13 @@
-The project aimed to achieve a clustering among a given set of genes,
-basing on their expression level. I was provided with a dataset of 72
-patients, each of which is affected either by \emph{Acute Lymphoblastic
-Leukemia} or by \emph{Acute Myeloid Leukemia}. Each record of the given
-dataset reports the expression levels for 5147 genes.
+    \subsubsection{Genes ranking}
 
-The expression level of a gene can used to discriminate the two forms of
-leukemia: basing on how the dataset is partitioned (more details on this
-later) genes can be ranked according to their precision in splitting the
-dataset.
-
-My final objective was the clustering hierarchically the genes having the
-best splitting performances, thus the available data have been elaborated
-in two phases:
-\begin{itemize}
-\item   The recognition of the best splitting threshold for each gene;
-\end{itemize}
-
+        The \FileName{genes\_rank} program analyzes the dataset file with
+        a \emph{supervised-learning} technique:
+        \begin{itemize}
+        \item   It identifies, for each gene, the best threshold to be
+                used for classification purposes;
+        \item   It orders the genes according to their effectiveness in
+                categorization;
+        \item   It produces as output a set of vectors, each of which
+                corresponds to a patient
+        \end{itemize}
 
