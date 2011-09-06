@@ -88,7 +88,7 @@ perspective.
         The best suited threshold $t_g$ for a gene $g$ is the element of
         $T$ which maximizes the Information Gain coming from the splitting.
 
-    \subsection{ Ranking the genes }
+    \subsubsection{ Ranking the genes }
 
         As we computed a threshold for each gene, we have as many binary
         classifiers as the number of analyzed genes. Some of them may
@@ -102,7 +102,47 @@ perspective.
 
 \subsection{ Clustering of Genes } \label{sub:Clustering}
 
-    In the threshold recognition phase we exploited the examples labels to
-    identify the genes showing a categorization capability with respect to
-    our classes.
+    In the \emph{threshold recognition} phase we exploited the examples
+    labels to identify the genes showing a categorization capability with
+    respect to our classes.
+
+    In this phase we want to group together genes which show a similar
+    behavior in terms of categorization of examples. In order to do this
+    we rely on the theoretical concepts described in this section.
+
+    \subsubsection{ Distance between clusters }
+
+        In a $n$-dimensional vector space \VecFn, we can give
+        many definitions of \emph{distance}. The most intuitive one
+        is the \emph{euclidean distance}:
+        \[
+        \mbox{let } v, w \in \VecFn \qquad
+        \Dist{v}{w} = \sqrt{\sum_{i = 1}^n (v_i - w_i)^2 }
+        \]
+
+        As we can compute the distance between two vectors, we can also
+        compute the distance between two \emph{groups} of vectors
+        Let $C = \Set{ c_1 \cdots c_n }$ and $D = \Set{ d_1 \cdots d_m }$
+        be two clusters we want to compare. The following techniques can
+        be used:
+        \begin{itemize}
+        \item   $\ClustDist{C}{D} = \Dist{\Avg{C}}{\Avg{D}}$;
+        \item   $\ClustDist{C}{D} = \Min{\Dist{x}{y} \st \Tuple{x,y} \in
+                                         C \times D}{}$;
+        \item   $\ClustDist{C}{D} = \Max{\Dist{x}{y} \st \Tuple{x,y} \in
+                                         C \times D}{}$;
+        \item   $\ClustDist{C}{D} = \Avg{\Dist{x}{y} \st \Tuple{x,y} \in
+                                         C \times D}{}$.
+        \end{itemize}
+
+        The clustering technique consists in an iterative process for
+        which the pair of clusters having the minimum distance gets merged
+        into a single set.
+
+    \subsubsection{ Translating genes into vectors }
+
+        In the previous phase we managed to define a binary classification
+        threshold for each gene and find the genes which show a certain
+        correlation with the disease. Now we want to group together genes
+        which show the same way of classifying the dataset.
 
