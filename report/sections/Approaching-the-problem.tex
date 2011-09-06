@@ -62,8 +62,8 @@ perspective.
         \]
 
         For each gene $g$, we search an expression level threshold $t_g$
-        to be used as boundary for our dataset partitioning. Once we have
-        $t_g$ we can split $D$ into two subsets:
+        to be used as boundary for our dataset partitioning, thus
+        splitting $D$ into two subsets:
         \[
         D_0 \:=\: \Set{ x \in D \:|\: x_g < t_g }
         \qquad
@@ -72,7 +72,37 @@ perspective.
         Once we have a partitioning, we can compute the Information Gain
         coming from it.
 
-        The best suited threshold $t_g$ for a gene $g$ is the one which
-        maximizes the Information Gain coming from the splitting
+        Let $L = \Tuple{\Tuple{x_0, y_0} \cdots \Tuple{x_m, y_m}}$ be a
+        list of pairs sorted by the first field. Each element of the list
+        corresponds to an element of the dataset, and it's a pair
+        $\Tuple{x,y}$ such that $x$ is the expression level of the gene
+        $g$ and $y$ it's the label of the example. The candidate
+        thresholds are the values
+        \[
+        T = \Set{ \frac{x_0 + x_1}{2} \:|\:
+                  \Tuple{x_0, y_0} = L_i \:\land\:
+                  \Tuple{x_1, y_1} = L_{i + 1} \:\land\:
+                  y_0 \neq y_1 }
+        \]
+
+        The best suited threshold $t_g$ for a gene $g$ is the element of
+        $T$ which maximizes the Information Gain coming from the splitting.
+
+    \subsection{ Ranking the genes }
+
+        As we computed a threshold for each gene, we have as many binary
+        classifiers as the number of analyzed genes. Some of them may
+        have a bad quality, while other may be better than other at
+        fitting the dataset labeling. The ones showing better performances
+        in splitting are likely to be more related with the leukemia type
+        with respect to the other.
+
+        The genes can be sorted according to the Information Gain they
+        yield if used as splitting parameter.
 
 \subsection{ Clustering of Genes } \label{sub:Clustering}
+
+    In the threshold recognition phase we exploited the examples labels to
+    identify the genes showing a categorization capability with respect to
+    our classes.
+
