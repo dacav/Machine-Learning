@@ -6,12 +6,17 @@ import itertools as it
 import re
 from collections import defaultdict as defdict
 from optparse import OptionParser
+from operator import itemgetter
+import parser
+import dataset
 
 from vecspace import Vector
 import hclust
 
 try: range = xrange
 except: pass
+
+DEFAULT_TAKEBEST = 100
 
 class ClustHistory :
 
@@ -69,15 +74,19 @@ def parse_options (argv):
     parser.add_option("--log-file", dest="log_file",
                       default="",
                       type="string", help="Target file for statistics")
+    parser.add_option("-D", "--dataset", dest="dataset", default="",
+                      type="string", help="Dataset file")
+    parser.add_option("-R", "--genes-rank", dest="genes_rank", default="",
+                      type="string", help="Dataset file")
+    parser.add_option("-n", type="int", help="Number of genes to take",
+                      dest="takebest", default=DEFAULT_TAKEBEST)
 
     opts, args = parser.parse_args(argv)
-    if len(args) < 2:
-        print("You must supply the vectors as input file!",
+    if not (opts.dataset and opts.genes_rank):
+        print("You must supply a genes-rank file and a dataset",
               file=sys.stderr)
         parser.print_help()
         return None
-    else:
-        opts.input_file = args[1]
 
     if not opts.algs:
         print("You must give me at least one algorithm")
@@ -99,19 +108,43 @@ def main (argv=None):
     if opts == None:
         return 1
 
-    pattern = re.compile(r'^ *Vector(.*) *$')
+    pattern = re.compile(r"Gene (\d+) : (-?\d+\.?\d*) (-?\d+\.?\d*)")
+    def parse_gene_info (row):
+        try:
+            m = pattern.match(row)
+            return int(m.group(1)), float(m.group(2))
+        except Exception as e:
+            print("Warning: skipping line \"{0}\"".format(row),
+                  "(cause: {0})".format(repr(e)), file=sys.stderr)
+            return None
 
-    def buildvec (name, desc):
-        V = Vector(eval(pattern.match(desc).group(1)))
-        V.name = name.strip()
-        return V
+    def binary_vectors (thrs, problem):
+        # Vectors having as many dimensions as the number of available
+        # examples. A vector for each gene.
+        examples = problem.get_examples()
+        bits = lambda i : it.imap(lambda x : int(x[0]),
+                                  examples.list_by(i))
 
-    inpt = log = None
+        def make_vector (i):
+            V = Vector(it.imap(lambda x : int(x[0]), examples.list_by(i)))
+            V.name = problem.feat_name(i)
+            return V
+
+        return it.imap(make_vector, it.imap(itemgetter(0), thrs))
+
+    rnk = inpt = log = None
     try:
-        inp = open(opts.input_file, "rt")
+        ds = open(opts.dataset, "rt")
+        rnk = open(opts.genes_rank, "rt")
         log = open(opts.log_file, "wt") if opts.log_file else sys.stderr
-        parts = it.imap(lambda row : row.split('\t'), inp)
-        genes = list( it.starmap(buildvec, parts) )
+        problem = parser.run(ds, dataset.ProblemStructure)
+
+        # Setting thresholds to read problem
+        thrs = list( it.ifilter(None, it.imap(parse_gene_info, rnk)) )
+        problem.set_thresholds(thrs)
+
+        genes = list( binary_vectors(it.islice(thrs, opts.takebest),
+                                               problem) )
 
         for alg in opts.algs:
             out_dot = open(alg + ".dot", "wt")
@@ -141,8 +174,11 @@ def main (argv=None):
     except KeyboardInterrupt:
         print("Interrupted. BYE!", file=sys.stderr)
         return 1
+    except Exception as e:
+        print(">> PHAIL: ", e)
     finally:
-        if inp: inp.close()
+        if ds: ds.close()
+        if rnk: rnk.close()
         if log: log.close()
 
     return 0
