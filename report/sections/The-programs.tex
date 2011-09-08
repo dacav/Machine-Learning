@@ -57,9 +57,32 @@ Section~\ref{sec:Approaching-the-problem}.
       -n TAKEBEST           Number of genes to take
     \end{verbatim}
 
-    An usage example is the following:
-%    \begin{verbatim}
-%    $ ./genes-clust 
-%    \end{verbatim}
+    The following command, for instance, computes the clustering for the
+    best 100 examples:
+    \begin{verbatim}
+    $ ./genes-clust --algorithm=all-of-them --log-file=log.txt \
+          -D ../dataset_1_2_3 -R ../results/thresholds.txt -n 100
+    \end{verbatim}
+    \begin{itemize}
+    \item   All algorithms have been selected, thus the following files
+            will be written:
+            \begin{itemize}
+            \item   \FileName{nearest-neighbor.dot};
+            \item   \FileName{dist-average.dot};
+            \item   \FileName{farthest-neighbor.dot};
+            \item   \FileName{average-distance.dot}.
+            \end{itemize}
+            Those files are representation in \emph{dot} language of the
+            clustering dendogram produced for each algorithm;
+    \item   The file \FileName{log.txt} will contain the statistics for
+            all the used algorithms (\emph{sum of squared errors} for each
+            iteration of the clustering mechanism);
+    \end{itemize}
+
+    Each \FileName{.dot} file can be compiled into a \emph{pdf} showing
+    the dendogram.
+    \begin{verbatim}
+    $ for i in *dot; do dot -Tpdf -o $(basename $i .dot).pdf < $i; done
+    \end{verbatim}
 
 \subsection{ Programs structure }
