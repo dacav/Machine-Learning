@@ -63,7 +63,7 @@ ALGS = {
 
 def parse_options (argv):
     parser = OptionParser(
-        usage="%prog [options] <vectors file>\n\n" + \
+        usage="%prog [options]\n\n" + \
               "Available algorithms\n\t" + \
               "\n\t".join(ALGS.iterkeys()) + "\n\tall-of-them"
     )
