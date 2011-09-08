@@ -2,7 +2,7 @@ As mentioned in Subsection~\ref{sub:Computational-steps}, I wrote two
 different programs, one for each of the phases described in
 Section~\ref{sec:Approaching-the-problem}.
 
-\subsection{ Programs usage }
+\subsection{ Usage }
 
     The program \FileName{genes-rank} requires as parameters the path
     of the file containing the dataset and a name for the output file:
@@ -80,9 +80,39 @@ Section~\ref{sec:Approaching-the-problem}.
     \end{itemize}
 
     Each \FileName{.dot} file can be compiled into a \emph{pdf} showing
-    the dendogram.
+    the dendogram:
     \begin{verbatim}
     $ for i in *dot; do dot -Tpdf -o $(basename $i .dot).pdf < $i; done
+    $ ls *pdf
+    average-distance.pdf  dist-average.pdf  farthest-neighbor.pdf
+    nearest-neighbor.pdf
     \end{verbatim}
+    Figure~\ref{img:Proof-of-concept} shows the clustering of the best 10
+    genes according to the provided dataset.
 
-\subsection{ Programs structure }
+    \Image{pics/nearest-neighbor}
+          {Clustering by \emph{nearest-neighbor} of the best 10 genes}
+          {img:Proof-of-concept}
+          {.4\textwidth}
+
+\subsection{ Structure }
+
+    Besides the \FileName{genes-rank} and \FileName{genes-clust}
+    executable files, the program is composed by the following
+    \emph{Python} modules:
+    \begin{itemize}
+    \item \FileName{utils.py}:
+        Generic utilities and algorithms;
+    \item \FileName{vecspace.py}:
+        Definition of a basic vector (just to avoid dependencies from
+        external libraries);
+    \item \FileName{parser.py}:
+        Parser for the dataset file;
+    \item \FileName{dataset.py}:
+        Definition of the problem structure and dataset access structures;
+    \item \FileName{thresholds.py}:
+        Genes threshold computation module;
+    \item \FileName{hclust.py}:
+        Hierarchical clustering module.
+    \end{itemize}
+
