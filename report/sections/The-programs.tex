@@ -4,16 +4,16 @@ Section~\ref{sec:Approaching-the-problem}.
 
 \subsection{ Programs usage }
 
-    The program \FileName{genes\_rank} requires as parameters the path
+    The program \FileName{genes-rank} requires as parameters the path
     of the file containing the dataset and a name for the output file:
     \begin{verbatim}
-    $ ./genes_rank ../dataset_1_2_3 ../results/thresholds.txt
+    $ ./genes-rank ../dataset_1_2_3 ../results/thresholds.txt
     \end{verbatim}
 
     After the elaboration phase, it produces as output a text-file
     containing a list of genes sorted by the maximal information gain, as
     described in Paragraph~\ref{subsub:Ranking-the-genes}. The file
-    produced by \FileName{genes\_rank} contains rows like the following:
+    produced by \FileName{genes-rank} contains rows like the following:
     \begin{verbatim}
     Gene 2376 : 154.5 0.698437155782
     Gene 1335 : 312.5 0.693746194896
@@ -31,13 +31,13 @@ Section~\ref{sec:Approaching-the-problem}.
     dataset file, while the second and the third are respectively the
     threshold and the information gain for that gene.
 
-    This output file can be parsed by the \FileName{genes\_clust} program,
+    This output file can be parsed by the \FileName{genes-clust} program,
     which can produce a clustering for genes according to what explained
     in Subsection~\ref{sub:Clustering-of-genes}. All the listed distance
     measure between clusters are available as options for the program:
     \begin{verbatim}
-    $ ./genes_clust --help
-    Usage: genes_clust [options] <vectors file>
+    $ ./genes-clust --help
+    Usage: genes-clust [options] <vectors file>
 
     Available algorithms
             nearest-neighbor
@@ -59,7 +59,7 @@ Section~\ref{sec:Approaching-the-problem}.
 
     An usage example is the following:
 %    \begin{verbatim}
-%    $ ./genes_clust 
+%    $ ./genes-clust 
 %    \end{verbatim}
 
 \subsection{ Programs structure }
