@@ -88,7 +88,7 @@ perspective.
         The best suited threshold $t_g$ for a gene $g$ is the element of
         $T$ which maximizes the Information Gain coming from the splitting.
 
-    \subsubsection{ Ranking the genes }
+    \subsubsection{ Ranking the genes } \label{subsub:Ranking-the-genes}
 
         As we computed a threshold for each gene, we have as many binary
         classifiers as the number of analyzed genes. Some of them may
@@ -100,7 +100,7 @@ perspective.
         The genes can be sorted according to the Information Gain they
         yield if used as splitting parameter.
 
-\subsection{ Clustering of Genes } \label{sub:Clustering}
+\subsection{ Clustering of Genes } \label{sub:Clustering-of-genes}
 
     In the \emph{threshold recognition} phase we exploited the examples
     labels to identify the genes showing a categorization capability with
@@ -142,7 +142,24 @@ perspective.
     \subsubsection{ Translating genes into vectors }
 
         In the previous phase we managed to define a binary classification
-        threshold for each gene and find the genes which show a certain
-        correlation with the disease. Now we want to group together genes
-        which show the same way of classifying the dataset.
+        threshold for each gene and find the subset $G$ of genes which
+        show a certain correlation with the disease. Now we want to group
+        together genes of $G$ which show a similar way of classifying the
+        dataset.
+
+        If we consider a single example $x$ of the dataset, two genes $g_a,
+        \:g_b \in G$ show the same behavior with respect to $x$ if $x_{g_a}
+        < t_{g_a} \iff x_{g_b} < t_{g_b}$. So far we can define a mapping
+        $f \::\: G \rightarrow \Set{0, 1}^N$ where $N$ is the number of
+        examples we are provided with.
+        \begin{align*}
+        \forall g \in G \qquad
+            & f(g) = \Tuple{g_0 \cdots g_N} \in \Set{0, 1}^N \\
+            & g_i = 0 \iff x_{i,g} < t_g
+        \end{align*}
+
+        Even if a space defined by values in $\Set{0, 1}$ is not properly
+        a vector space, the \emph{euclidean distance} still works on it,
+        so we can group together similar genes with a clustering
+        technique.
 

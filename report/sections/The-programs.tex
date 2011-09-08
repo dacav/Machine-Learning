@@ -1,2 +1,65 @@
-% TODO: mention the partial overlapping of the two programs! Or just fix
-% them
+As mentioned in Subsection~\ref{sub:Computational-steps}, I wrote two
+different programs, one for each of the phases described in
+Section~\ref{sec:Approaching-the-problem}.
+
+\subsection{ Programs usage }
+
+    The program \FileName{genes\_rank} requires as parameters the path
+    of the file containing the dataset and a name for the output file:
+    \begin{verbatim}
+    $ ./genes_rank ../dataset_1_2_3 ../results/thresholds.txt
+    \end{verbatim}
+
+    After the elaboration phase, it produces as output a text-file
+    containing a list of genes sorted by the maximal information gain, as
+    described in Paragraph~\ref{subsub:Ranking-the-genes}. The file
+    produced by \FileName{genes\_rank} contains rows like the following:
+    \begin{verbatim}
+    Gene 2376 : 154.5 0.698437155782
+    Gene 1335 : 312.5 0.693746194896
+    Gene 3544 : 994.0 0.693746194896
+    Gene 1374 : 1419.5 0.681680475648
+    ...
+    \end{verbatim}
+
+    Which can be matched by the \emph{regular expression}
+    \begin{verbatim}
+    Gene (\d+) : (-?\d+\.?\d*) (-?\d+\.?\d*)
+    \end{verbatim}
+
+    The first numeric value is the index of the gene with respect to the
+    dataset file, while the second and the third are respectively the
+    threshold and the information gain for that gene.
+
+    This output file can be parsed by the \FileName{genes\_clust} program,
+    which can produce a clustering for genes according to what explained
+    in Subsection~\ref{sub:Clustering-of-genes}. All the listed distance
+    measure between clusters are available as options for the program:
+    \begin{verbatim}
+    $ ./genes_clust --help
+    Usage: genes_clust [options] <vectors file>
+
+    Available algorithms
+            nearest-neighbor
+            dist-average
+            farthest-neighbor
+            average-distance
+            all-of-them
+
+    Options:
+      -h, --help            show this help message and exit
+      --algorithm=ALGS      Enable distance algorithm
+      --log-file=LOG_FILE   Target file for statistics
+      -D DATASET, --dataset=DATASET
+                            Dataset file
+      -R GENES_RANK, --genes-rank=GENES_RANK
+                            Dataset file
+      -n TAKEBEST           Number of genes to take
+    \end{verbatim}
+
+    An usage example is the following:
+%    \begin{verbatim}
+%    $ ./genes_clust 
+%    \end{verbatim}
+
+\subsection{ Programs structure }
