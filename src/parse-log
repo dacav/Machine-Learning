@@ -1,0 +1,32 @@
+#!/usr/bin/perl -w
+
+# genes-clust log quick'n dirty parser. Parse the stuff, put inside some
+# files, plot with gnuplot. Easy right?
+
+use strict;
+use warnings;
+
+if ($#ARGV < 0) {
+    print STDERR "Provide me log file\n";
+    exit 1;
+}
+
+my ($input, $out);
+open($input, "<", "$ARGV[0]") or die "LOL";
+while (<$input>) {
+    if (/Starting clustering with algorithm (.*)/) {
+        if (defined $out) {
+            close $out;
+        }
+        my $fn = "plot-$1";
+        open($out, ">", $fn) or die "Unable to open $fn\n";
+        print "Starting to write $fn\n";
+    }
+    if (/^\s*\D+(\d+); \D+\d+; \D+(\d+)/) {
+        print $out "$1 $2\n";
+    }
+}
+close($out);
+close($input);
+
+exit 0;

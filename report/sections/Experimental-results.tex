@@ -1,0 +1,18 @@
+\Image{pics/squared-errs}
+      {Comparison between clustering quality by using different clustering
+       techniques. The clustering has been run with 100 experiments. Each
+       iteration merges two clusters (thus we have 100 iterations)}
+      {img:Squared-errors}
+      {\textwidth}
+
+For each distance measure and for each iteration of the clustering
+mechanism, the \FileName{genes-clust} program records the \emph{sum of squared errors} inside the log file.
+
+I quckly wrote the \FileName{parse-log} program to parse it out and I fed
+\emph{gnuplot} with the output, producing the graphs shown in
+Figure~\ref{img:Squared-errors}.
+
+The plot highlights that the quality of the clustering with different
+distance measure is comparable, although the \emph{farthest neighbor} and
+the \emph{average distance} techniques seems to work slightly better than
+the other.
