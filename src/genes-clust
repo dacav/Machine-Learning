@@ -156,9 +156,9 @@ def main (argv=None):
 
             for step in it.count(1):
                 sqderr = clm.sum_of_squared_errors()
-                print("    Iteration: {0:03d}".format(step),
-                      "Clusters: {0:03d}".format(clm.nclusts()),
-                      "Sum of quared errors: {0:03.5f}".format(sqderr),
+                print("    Iteration: {0:03d};".format(step),
+                      "N.Clusters: {0:03d};".format(clm.nclusts()),
+                      "Sum of squared errors: {0:03.5f}".format(sqderr),
                       file=log)
                 if clm.step(): break
             ch.end()
