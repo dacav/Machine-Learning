@@ -139,6 +139,21 @@ perspective.
         which the pair of clusters having the minimum distance gets merged
         into a single set.
 
+    \subsubsection{ Evaluation of the clustering }
+
+        At each step of clustering we can evaluate the quality of the
+        operation by applying the \emph{sum of squared errors} technique:
+        let $C_1 \cdots C_k$ be the set of clusters we are working with,
+        the sum of squared errors of the cluster is
+        \[
+        s_e = \sum_{i = 1}^k \sum_{x \in C_i} \Norm{x - \Avg{C_i}}^2
+        \]
+
+        This value is 0 for singleton clusters, and gets higher values for
+        clusters composed by a set of sparse vectors. Dependently on the
+        kind of distance measure we use for the clustering, we could have
+        a quicker or a slower growth of this measure.
+
     \subsubsection{ Translating genes into vectors }
 
         In the previous phase we managed to define a binary classification
@@ -162,4 +177,3 @@ perspective.
         a vector space, the \emph{euclidean distance} still works on it,
         so we can group together similar genes with a clustering
         technique.
-
